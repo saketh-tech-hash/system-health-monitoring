@@ -11,35 +11,6 @@ This application allows you to:
 - Visualize the system as a graph with color-coded health indicators
 - Track and persist health check results over time
 
-## Directory Structure
-
-system-health-monitor/
-app.py                      # Main FastAPI application
-requirements.txt            # Project dependencies
-example.json                # Example system configuration
-mixed_services.json         # Example with mixed health statuses
-real_world_websites.json    # Real-world websites example
-cloud_infrastructure.json   # Cloud infrastructure example
-
-models/
-  __init__.py
-  graph.py                  # Graph data structure
-
-services/
-  __init__.py
-  health_checker.py         # Health checking logic
-
-utils/
-  __init__.py
-  data_loader.py            # JSON data loading
-  graph_visualizer.py       # Graph visualization
-
-templates/
-  index.html                # Main UI template
-  health_view.html          # Health dashboard
-
-static/                     # Generated artifacts (created at runtime)
-
 ## Installation and Setup
 
 ### Prerequisites
