@@ -1,0 +1,87 @@
+{
+    "nodes": [
+      {
+        "id": "frontend",
+        "name": "Frontend Application",
+        "description": "User interface",
+        "check_type": "http",
+        "url": "https://www.example.com",
+        "step": 1
+      },
+      {
+        "id": "api_gateway",
+        "name": "API Gateway",
+        "description": "API routing service",
+        "check_type": "http",
+        "url": "https://github.com",
+        "step": 1
+      },
+      {
+        "id": "auth_service",
+        "name": "Authentication Service",
+        "description": "User authentication",
+        "check_type": "http",
+        "url": "https://auth.nonexistent-domain-123456.com",
+        "step": 2
+      },
+      {
+        "id": "user_service",
+        "name": "User Service",
+        "description": "User management",
+        "check_type": "http",
+        "url": "https://www.google.com",
+        "step": 2
+      },
+      {
+        "id": "payment_service",
+        "name": "Payment Service",
+        "description": "Payment processing",
+        "check_type": "http",
+        "url": "https://payment.invalid-service-endpoint.org",
+        "step": 2
+      },
+      {
+        "id": "product_service",
+        "name": "Product Service",
+        "description": "Product catalog",
+        "check_type": "http",
+        "url": "https://www.microsoft.com",
+        "step": 2
+      },
+      {
+        "id": "inventory_service",
+        "name": "Inventory Service",
+        "description": "Stock management",
+        "check_type": "http",
+        "url": "https://inventory.nonexistent-system.com",
+        "step": 3
+      },
+      {
+        "id": "notification_service",
+        "name": "Notification Service",
+        "description": "Email and SMS notifications",
+        "check_type": "http",
+        "url": "https://www.yahoo.com",
+        "step": 3
+      },
+      {
+        "id": "analytics_service",
+        "name": "Analytics Service",
+        "description": "Business intelligence",
+        "check_type": "http",
+        "url": "https://analytics.invalid-endpoint.net",
+        "step": 3
+      }
+    ],
+    "edges": [
+      {"source": "frontend", "target": "api_gateway"},
+      {"source": "api_gateway", "target": "auth_service"},
+      {"source": "api_gateway", "target": "user_service"},
+      {"source": "api_gateway", "target": "product_service"},
+      {"source": "api_gateway", "target": "payment_service"},
+      {"source": "product_service", "target": "inventory_service"},
+      {"source": "user_service", "target": "notification_service"},
+      {"source": "payment_service", "target": "notification_service"},
+      {"source": "api_gateway", "target": "analytics_service"}
+    ]
+  }

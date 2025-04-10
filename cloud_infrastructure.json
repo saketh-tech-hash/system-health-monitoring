@@ -1,0 +1,101 @@
+{
+    "nodes": [
+      {
+        "id": "load_balancer",
+        "name": "Load Balancer",
+        "description": "Traffic distribution",
+        "check_type": "http",
+        "url": "https://www.cloudflare.com",
+        "step": 1
+      },
+      {
+        "id": "web_server_1",
+        "name": "Web Server 1",
+        "description": "Primary web server",
+        "check_type": "http",
+        "url": "https://status.aws.amazon.com",
+        "step": 2
+      },
+      {
+        "id": "web_server_2",
+        "name": "Web Server 2",
+        "description": "Secondary web server",
+        "check_type": "http",
+        "url": "https://nonexistent-webserver.company.com",
+        "step": 2
+      },
+      {
+        "id": "database_primary",
+        "name": "Primary Database",
+        "description": "Main database",
+        "check_type": "http",
+        "url": "https://www.mongodb.com",
+        "step": 3
+      },
+      {
+        "id": "database_replica",
+        "name": "Database Replica",
+        "description": "Backup database",
+        "check_type": "http",
+        "url": "https://db-replica.nonexistent-system.com",
+        "step": 3
+      },
+      {
+        "id": "cache_server",
+        "name": "Cache Server",
+        "description": "Data caching",
+        "check_type": "http",
+        "url": "https://redis.io",
+        "step": 3
+      },
+      {
+        "id": "storage_service",
+        "name": "Storage Service",
+        "description": "File storage",
+        "check_type": "http",
+        "url": "https://invalid-storage-endpoint.net",
+        "step": 4
+      },
+      {
+        "id": "backup_service",
+        "name": "Backup Service",
+        "description": "System backups",
+        "check_type": "http",
+        "url": "https://www.backblaze.com",
+        "step": 4
+      },
+      {
+        "id": "monitoring",
+        "name": "Monitoring Service",
+        "description": "System monitoring",
+        "check_type": "http",
+        "url": "https://grafana.com",
+        "step": 1
+      },
+      {
+        "id": "log_server",
+        "name": "Log Server",
+        "description": "Centralized logging",
+        "check_type": "http",
+        "url": "https://logs.invalid-server.org",
+        "step": 2
+      }
+    ],
+    "edges": [
+      {"source": "load_balancer", "target": "web_server_1"},
+      {"source": "load_balancer", "target": "web_server_2"},
+      {"source": "web_server_1", "target": "database_primary"},
+      {"source": "web_server_1", "target": "cache_server"},
+      {"source": "web_server_2", "target": "database_primary"},
+      {"source": "web_server_2", "target": "cache_server"},
+      {"source": "database_primary", "target": "database_replica"},
+      {"source": "database_primary", "target": "storage_service"},
+      {"source": "database_replica", "target": "storage_service"},
+      {"source": "database_primary", "target": "backup_service"},
+      {"source": "monitoring", "target": "web_server_1"},
+      {"source": "monitoring", "target": "web_server_2"},
+      {"source": "monitoring", "target": "database_primary"},
+      {"source": "web_server_1", "target": "log_server"},
+      {"source": "web_server_2", "target": "log_server"}
+    ]
+  }

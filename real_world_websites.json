@@ -1,0 +1,88 @@
+{
+    "nodes": [
+      {
+        "id": "github",
+        "name": "GitHub",
+        "description": "Code hosting platform",
+        "check_type": "http",
+        "url": "https://github.com",
+        "step": 1
+      },
+      {
+        "id": "stackoverflow",
+        "name": "Stack Overflow",
+        "description": "Developer Q&A site",
+        "check_type": "http",
+        "url": "https://stackoverflow.com",
+        "step": 2
+      },
+      {
+        "id": "aws",
+        "name": "AWS",
+        "description": "Amazon Web Services",
+        "check_type": "http",
+        "url": "https://aws.amazon.com",
+        "step": 1
+      },
+      {
+        "id": "pypi",
+        "name": "PyPI",
+        "description": "Python Package Index",
+        "check_type": "http",
+        "url": "https://pypi.org",
+        "step": 2
+      },
+      {
+        "id": "npm",
+        "name": "NPM",
+        "description": "Node Package Manager",
+        "check_type": "http",
+        "url": "https://www.npmjs.com",
+        "step": 2
+      },
+      {
+        "id": "microsoft",
+        "name": "Microsoft",
+        "description": "Microsoft corporate site",
+        "check_type": "http",
+        "url": "https://www.microsoft.com",
+        "step": 1
+      },
+      {
+        "id": "azure",
+        "name": "Azure",
+        "description": "Microsoft cloud platform",
+        "check_type": "http",
+        "url": "https://azure.microsoft.com",
+        "step": 2
+      },
+      {
+        "id": "kubernetes",
+        "name": "Kubernetes",
+        "description": "Container orchestration",
+        "check_type": "http",
+        "url": "https://kubernetes.io",
+        "step": 3
+      },
+      {
+        "id": "python",
+        "name": "Python",
+        "description": "Python programming language",
+        "check_type": "http",
+        "url": "https://www.python.org",
+        "step": 1
+      }
+    ],
+    "edges": [
+      {"source": "github", "target": "stackoverflow"},
+      {"source": "python", "target": "pypi"},
+      {"source": "github", "target": "pypi"},
+      {"source": "github", "target": "npm"},
+      {"source": "microsoft", "target": "azure"},
+      {"source": "azure", "target": "kubernetes"},
+      {"source": "aws", "target": "kubernetes"},
+      {"source": "python", "target": "github"},
+      {"source": "microsoft", "target": "github"},
+      {"source": "npm", "target": "stackoverflow"}
+    ]
+  }

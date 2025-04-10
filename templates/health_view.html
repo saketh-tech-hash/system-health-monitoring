@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Health Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .graph-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .status-badge {
+            font-size: 1.2em;
+            padding: 8px 16px;
+        }
+        .refresh-btn {
+            margin-bottom: 20px;
+        }
+        
+        /* Status colors that override Bootstrap's striping */
+        .status-healthy {
+            color: #28a745 !important;  /* Important to override striping */
+            font-weight: bold;
+        }
+        .status-unhealthy {
+            color: #dc3545 !important;  /* Important to override striping */
+            font-weight: bold;
+        }
+        
+        /* Status pill badges for more consistent appearance */
+        .status-pill {
+            display: inline-block;
+            padding: 0.25em 0.6em;
+            border-radius: 10rem;
+            font-size: 0.875em;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            color: white;
+        }
+        .status-pill-healthy {
+            background-color: #28a745;
+        }
+        .status-pill-unhealthy {
+            background-color: #dc3545;
+        }
+        
+        /* Override table striping for status column to ensure consistent appearance */
+        .table-striped tbody tr:nth-of-type(odd) .status-column,
+        .table-striped tbody tr:nth-of-type(even) .status-column {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>System Health Dashboard</h1>
+            <div>
+                <span id="refreshTime" class="text-muted me-3"></span>
+                <button id="refreshBtn" class="btn btn-primary">Refresh</button>
+                <a href="/" class="btn btn-outline-secondary ms-2">Home</a>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title">Overall System Status</h5>
+                <span id="systemStatusBadge" class="badge rounded-pill status-badge bg-secondary">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="graph-container">
+            <h5>System Component Graph</h5>
+            <div id="graphPlaceholder" class="text-center p-5 bg-light rounded">
+                <p class="text-muted">Upload a system configuration or click "Refresh" to view the graph</p>
+            </div>
+            <img id="graphImage" class="img-fluid" style="max-width: 1000px; display: none;" src="" alt="System Graph">
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                Component Health Details
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Status</th>
+                            <th>Response Time</th>
+                            <th>Details</th>
+                            <th>Last Checked</th>
+                        </tr>
+                    </thead>
+                    <tbody id="healthTableBody">
+                        <tr id="loadingRow" class="loading-placeholder">
+                            <td colspan="5" class="text-center">
+                                <div class="my-3">
+                                    <p>No data available. Upload a system configuration or click "Refresh" to check health status.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click event for refresh button
+            document.getElementById('refreshBtn').addEventListener('click', loadData);
+            
+            // Update the timestamp 
+            const now = new Date();
+            document.getElementById('refreshTime').textContent = 
+                `Last refreshed: ${now.toLocaleTimeString()}`;
+                
+            // Try to load latest data
+            loadData();
+        });
+        
+        async function loadData() {
+            try {
+                // Get latest health results
+                const response = await fetch('/latest-health-results/', {
+                    method: 'GET'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error fetching health data');
+                }
+                
+                const data = await response.json();
+                
+                // Check if we have any actual data
+                if (data.system_status === "No data available" || !data.graph_image) {
+                    // If no data available yet, fall back to demo data
+                    await loadDemoData();
+                    return;
+                }
+                
+                // Update dashboard with the latest data
+                updateDashboard(data);
+                
+                // Update refresh time
+                const now = new Date();
+                document.getElementById('refreshTime').textContent = 
+                    `Last refreshed: ${now.toLocaleTimeString()}`;
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Try loading demo data as fallback
+                await loadDemoData();
+            }
+        }
+        
+        // Separate function to load demo data if needed
+        async function loadDemoData() {
+            try {
+                const response = await fetch('/check-health-demo/', {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error fetching demo data');
+                }
+                
+                const data = await response.json();
+                updateDashboard(data);
+                
+                // Update refresh time
+                const now = new Date();
+                document.getElementById('refreshTime').textContent = 
+                    `Last refreshed: ${now.toLocaleTimeString()} (demo data)`;
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function updateDashboard(data) {
+            // Update system status badge
+            const statusBadge = document.getElementById('systemStatusBadge');
+            statusBadge.textContent = data.system_status;
+            statusBadge.className = 'badge rounded-pill status-badge ' + 
+                (data.system_status === 'Healthy' ? 'bg-success' : 'bg-danger');
+            
+            // Update graph image
+            const graphImage = document.getElementById('graphImage');
+            const graphPlaceholder = document.getElementById('graphPlaceholder');
+            
+            if (data.graph_image) {
+                graphImage.src = 'data:image/png;base64,' + data.graph_image;
+                graphImage.style.display = 'block';
+                graphPlaceholder.style.display = 'none';
+            }
+            
+            // Update health table
+            const tableBody = document.getElementById('healthTableBody');
+            tableBody.innerHTML = '';
+            
+            if (!data.health_results || Object.keys(data.health_results).length === 0) {
+                // If no results, show no data message
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <div class="my-3">
+                                <p>No health data available.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // Sort nodes by ID for consistent display
+                const sortedNodeIds = Object.keys(data.health_results).sort();
+                
+                // Create rows for each result
+                for (const nodeId of sortedNodeIds) {
+                    const result = data.health_results[nodeId];
+                    const row = document.createElement('tr');
+                    
+                    const isHealthy = result.status;
+                    const statusPillClass = isHealthy ? 'status-pill-healthy' : 'status-pill-unhealthy';
+                    const statusText = isHealthy ? 'Healthy' : 'Unhealthy';
+                    const now = new Date().toLocaleTimeString();
+                    
+                    // Format response time to 3 decimal places
+                    const responseTime = typeof result.response_time === 'number' 
+                        ? result.response_time.toFixed(3) + 's'
+                        : 'N/A';
+                    
+                    row.innerHTML = `
+                        <td><strong>${nodeId}</strong></td>
+                        <td class="status-column">
+                            <span class="status-pill ${statusPillClass}">${statusText}</span>
+                        </td>
+                        <td>${responseTime}</td>
+                        <td>${result.message || 'No details available'}</td>
+                        <td>${now}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                }
+            }
+            
+            // If there are still any loading placeholders, hide them
+            document.querySelectorAll('.loading-placeholder').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
