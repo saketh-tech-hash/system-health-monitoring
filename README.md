@@ -22,7 +22,7 @@ This application allows you to:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/system-health-monitor.git
+git clone https://github.com/saketh-tech-hash/system-health-monitoring.git
 cd system-health-monitor
 ```
 
